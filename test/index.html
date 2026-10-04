@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Test van SamenFiets</title>
+<style>
+  body { margin: 0; padding: 24px 16px; font: 18px/1.5 system-ui, -apple-system, sans-serif; color: #1a1a1a; background: #ffffff; }
+  main { max-width: 32rem; margin: 0 auto; }
+  h1 { font-size: 1.5rem; line-height: 1.3; }
+  h2 { font-size: 1.1rem; margin-top: 2rem; }
+  button { font: inherit; font-weight: 600; padding: 16px 24px; border: 0; border-radius: 12px; background: #1a1a1a; color: #ffffff; width: 100%; }
+  button[disabled] { opacity: 0.5; }
+  a { color: #1a1a1a; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="titel">Dit is een test van SamenFiets</h1>
+  <div id="tekst"></div>
+  <button id="knop" type="button" hidden></button>
+  <section id="uitnodiging" hidden>
+    <h2 id="uitnodiging-titel"></h2>
+    <p id="uitnodiging-tekst"></p>
+    <p id="uitnodiging-link"></p>
+  </section>
+</main>
+<noscript><p>Deze pagina heeft JavaScript nodig om je reactie te versturen.</p></noscript>
+<script type="module">
+  import { API } from './config.js'
+  import { inhoud, staatNaAntwoord, tokenUitHash } from './pagina.js'
+
+  const token = tokenUitHash(location.hash)
+  const $ = (id) => document.getElementById(id)
+
+  function toon(staat) {
+    const i = inhoud(staat)
+    $('titel').textContent = i.titel
+    document.title = `${i.titel} — SamenFiets`
+    const tekst = $('tekst')
+    tekst.replaceChildren(...i.alineas.map((a) => Object.assign(document.createElement('p'), { textContent: a })))
+    const knop = $('knop')
+    knop.hidden = !i.knop
+    knop.disabled = false
+    knop.textContent = i.knop ?? ''
+    const u = $('uitnodiging')
+    u.hidden = !i.uitnodiging
+    if (i.uitnodiging) {
+      $('uitnodiging-titel').textContent = i.uitnodiging.titel
+      $('uitnodiging-tekst').textContent = i.uitnodiging.tekst
+      const plek = $('uitnodiging-link')
+      if (i.uitnodiging.link) {
+        const a = Object.assign(document.createElement('a'), { href: i.uitnodiging.link, textContent: 'Haal de app' })
+        plek.replaceChildren(a)
+      } else {
+        plek.textContent = i.uitnodiging.zonderLink
+      }
+    }
+  }
+
+  // Reageren is de knop: bij het laden gaat er niets de deur uit.
+  async function reageer() {
+    toon({ soort: 'bezig' })
+    try {
+      const antwoord = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      })
+      const body = await antwoord.json().catch(() => null)
+      toon(staatNaAntwoord(antwoord.status, body))
+    } catch {
+      toon({ soort: 'storing' })
+    }
+  }
+
+  $('knop').addEventListener('click', () => void reageer())
+  toon(token ? { soort: 'vraag' } : { soort: 'ongeldig' })
+</script>
+</body>
+</html>
