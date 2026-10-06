@@ -8,5 +8,9 @@ een test krijgt, tikt hier op "Het is aangekomen". Er is geen app voor nodig.
 - Bij het openen gaat er niets de deur uit. Pas de knop registreert.
 - Er staat geen sleutel in deze repo. Het adres van de functie is openbaar.
 
-De bron staat in de (privé) SamenFiets-repo onder `web/test/`. Deze repo is
-alleen de publicatie op GitHub Pages; wijzig de pagina daar, niet hier.
+De pagina staat op https://totthuis.nl/t (`t.html`); de link in de sms is
+`https://totthuis.nl/t#<token>`.
+
+De bron staat in de (privé) SamenFiets-repo onder `web/` (`t.html` en
+`test/`). Deze repo is alleen de publicatie op GitHub Pages; wijzig de pagina
+daar, niet hier.
