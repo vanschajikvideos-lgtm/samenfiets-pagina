@@ -29,8 +29,8 @@
 </main>
 <noscript><p>Deze pagina heeft JavaScript nodig om je reactie te versturen.</p></noscript>
 <script type="module">
-  import { API } from './config.js'
-  import { inhoud, staatNaAntwoord, tokenUitHash } from './pagina.js'
+  import { API } from './test/config.js'
+  import { inhoud, staatNaAntwoord, tokenUitHash } from './test/pagina.js'
 
   const token = tokenUitHash(location.hash)
   const $ = (id) => document.getElementById(id)
@@ -38,7 +38,7 @@
   function toon(staat) {
     const i = inhoud(staat)
     $('titel').textContent = i.titel
-    document.title = `${i.titel} — SamenFiets`
+    document.title = `SamenFiets: ${i.titel}`
     const tekst = $('tekst')
     tekst.replaceChildren(...i.alineas.map((a) => Object.assign(document.createElement('p'), { textContent: a })))
     const knop = $('knop')
