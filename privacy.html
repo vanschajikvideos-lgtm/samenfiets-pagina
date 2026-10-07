@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Welke gegevens Tot Thuis in de testfase verwerkt, waar ze staan en hoe lang.">
+<title>Privacy · Tot Thuis</title>
+<link rel="stylesheet" href="stijl.css">
+</head>
+<body>
+<header class="breed kop">
+  <a class="merk" href="./">Tot Thuis</a>
+  <nav aria-label="Op deze pagina">
+    <a href="#english" lang="en">In English</a>
+  </nav>
+</header>
+
+<main class="kolom">
+  <h1>Privacy in de testfase</h1>
+  <p>Tot Thuis is in een testfase met een kleine kring. Hier staat welke gegevens de app nu verwerkt, waarvoor, waar ze staan en hoe lang. Dit is nog geen volledige privacyverklaring; die is nodig voordat de app buiten de testkring komt.</p>
+  <p>Alles wat hieronder staat, dient één doel: je rit bijhouden en de mensen die jij kiest een bericht sturen als je niet laat weten dat je er bent. Geen reclame en geen verkoop van gegevens.</p>
+
+  <h2>Wie verantwoordelijk is</h2>
+  <p>Mischa van Schajik, Zaandam. Vragen over je gegevens: <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>.</p>
+
+  <h2>Als je de app gebruikt</h2>
+  <ul>
+    <li><strong>Je account.</strong> Je komt binnen met een uitnodigingscode. De app maakt een account aan zonder e-mailadres of wachtwoord.</li>
+    <li><strong>Je bijnaam en je telefoonnummer.</strong> Het nummer staat versleuteld opgeslagen. Leesbaar bewaren we alleen het begin en de laatste vier cijfers, zodat je in de app ziet welk nummer het is.</li>
+    <li><strong>Je codes</strong> bewaren we alleen als hash: niemand kan ze teruglezen.</li>
+    <li><strong>Je vertrouwenspersonen:</strong> de naam die jij invult en hun telefoonnummer, op dezelfde manier versleuteld. Verder de volgorde en wanneer ze voor het laatst op een test reageerden.</li>
+    <li><strong>Je ritten.</strong> Tijdens een rit stuurt je telefoon je locatie, de nauwkeurigheid daarvan, je snelheid, je richting en je batterijstand naar de server. Verder het begin van de rit, de verwachte aankomst en de bestemming zoals je die invult.</li>
+    <li><strong>Plekken die je bewaart</strong>, zoals Thuis, blijven op je telefoon. Ze gaan niet naar de server.</li>
+    <li><strong>De nep-beller.</strong> De naam en de foto van wie belt blijven op je telefoon. Ze gaan niet naar de server.</li>
+    <li><strong>Adressen.</strong> Zoek je een adres op, dan gaat dat adres naar Apple, de adreszoeker van je iPhone. Bij een alarm toont de app het adres bij een locatie; ook dan gaat die locatie naar Apple.</li>
+  </ul>
+
+  <h2>Als je vertrouwenspersoon bent</h2>
+  <ul>
+    <li>Je hebt geen account bij ons. Je naam en nummer zijn ingevuld door degene die jou opgaf; anders hebben wij je nummer niet.</li>
+    <li>Wij sturen je alleen een test, en een bericht als het bij een rit van die persoon misgaat. Nooit reclame.</li>
+    <li>Tik je op de knop op de testpagina, dan bewaren we het tijdstip waarop je reageerde. In onze database slaan wij je IP-adres niet op. De technische logboeken van Supabase kunnen het wel bevatten.</li>
+    <li>Wil je niet meer benaderd worden, of wil je dat je nummer gewist wordt, mail dan naar <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>.</li>
+  </ul>
+
+  <h2>Waar de gegevens staan</h2>
+  <ul>
+    <li><strong>Supabase, in Frankfurt (Duitsland):</strong> de database en de server van de app. Alles hierboven staat daar, behalve wat op je telefoon blijft. Supabase houdt technische logboeken bij van verzoeken aan de server; wij zetten daar geen telefoonnummers of berichtteksten in.</li>
+    <li><strong>GatewayAPI, op het EU-platform:</strong> verstuurt de sms’en. GatewayAPI ziet per bericht het telefoonnummer, de tekst en de afzender TotThuis. Met GatewayAPI is op 6 oktober 2026 een verwerkersovereenkomst gesloten. Hoe lang GatewayAPI verstuurde berichten bewaart, zetten we hier nog neer.</li>
+    <li><strong>Apple:</strong> de adreszoeker van je iPhone, zoals hierboven beschreven.</li>
+    <li><strong>GitHub Pages:</strong> deze website. Zoals elke webhost ziet GitHub je IP-adres als je een pagina opent. De website zet geen cookies en houdt geen bezoekersstatistieken bij.</li>
+  </ul>
+  <p>Meldingen op je scherm (pushmeldingen) staan in deze fase nog uit. Gaan ze aan, dan lopen ze via de pushdienst van Expo en die van Apple; dat komt dan op deze pagina.</p>
+
+  <h2>Tellers</h2>
+  <p>De server telt per dag hoe vaak iets gebeurt, bijvoorbeeld hoeveel ritten er begonnen, hoe vaak een check-in afging en hoeveel alarmen er waren, per reden. Er zit geen persoon, rit of plek aan vast: alleen een datum, een soort gebeurtenis en een aantal. Zo kunnen we laten zien wat de app doet. Voor één soort alarm, waarvan een klein aantal iets over iemand zou kunnen verraden, geven de totalen onder de 10 geen getal, maar "minder dan 10". De tellers blijven bewaard.</p>
+
+  <h2>Hoe lang we het bewaren</h2>
+  <ul>
+    <li>Je locatie tijdens een rit zonder alarm: gewist zodra de rit voorbij is. Na een alarm: 30 dagen na het einde van de rit.</li>
+    <li>Een losse kopie van je laatste positie: gewist na twee minuten.</li>
+    <li>De tekst van verstuurde berichten: 7 dagen.</li>
+    <li>Welke vertrouwenspersoon wanneer is benaderd: na 30 dagen zonder naam, na 12 maanden gewist.</li>
+    <li>Van een rit zelf blijven het begin, het einde en de bestemming zoals je die invulde bewaard, net als het tijdstip van een testreactie. Daar is nog geen termijn voor; ze blijven tot je account gewist wordt.</li>
+    <li>Je account, je nummer en je vertrouwenspersonen: tot je account gewist wordt.</li>
+  </ul>
+
+  <h2>Inzage en wissen</h2>
+  <p>Mail naar <a href="mailto:info@totthuis.nl">info@totthuis.nl</a> om te zien welke gegevens we van je hebben, of om ze te laten wissen. In deze fase gebeurt dat met de hand: er is nog geen knop in de app om je account of een vertrouwenspersoon te wissen.</p>
+  <p>Ben je het niet eens met hoe we met je gegevens omgaan, dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
+
+  <h2>Wat nog niet geregeld is</h2>
+  <ul>
+    <li>Een knop in de app om je account of een vertrouwenspersoon te wissen.</li>
+    <li>Een bewaartermijn voor ritten en testreacties.</li>
+    <li>Een verwerkersovereenkomst met Supabase, en een DPIA: een beoordeling van de privacyrisico’s.</li>
+    <li>De bewaartermijn van GatewayAPI op deze pagina.</li>
+  </ul>
+
+  <section id="english" lang="en">
+    <h2>In English</h2>
+    <p>Tot Thuis is in a test phase with a small circle of people. For a user it stores a nickname, a phone number (encrypted), the names and phone numbers of the trusted contacts the user enters (numbers encrypted), and location data during rides. Trusted contacts have no account; their number is entered by the user. Data is stored by Supabase in Frankfurt, Germany. Text messages are sent through the EU platform of GatewayAPI.</p>
+    <p>Location data from a ride without an alarm is deleted when the ride ends; after an alarm, 30 days after the ride ends. Message texts are kept for 7 days. Our database does not store your IP address; Supabase’s technical logs may contain it. The app keeps daily totals per type of event, such as rides started, without any person, ride or place attached. There is no advertising and no sale of data, and this website sets no cookies. To see or delete your data, email <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>.</p>
+  </section>
+</main>
+
+<footer class="voet">
+  <div class="breed">
+    <a class="merk" href="./">Tot Thuis</a>
+    <p class="regels">
+      <span>Mischa van Schajik, Zaandam</span>
+      <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>
+      <a href="./">Voorpagina</a>
+    </p>
+  </div>
+</footer>
+</body>
+</html>

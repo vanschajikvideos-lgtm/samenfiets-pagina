@@ -9,8 +9,10 @@
 <link rel="stylesheet" href="stijl.css">
 </head>
 <body>
-<main>
-  <p class="merk">Tot Thuis</p>
+<header class="breed kop">
+  <a class="merk" href="./">Tot Thuis</a>
+</header>
+<main class="kolom">
   <h1 id="titel">Deze pagina hoort bij een test van Tot Thuis</h1>
   <div id="tekst">
     <p>Wie Tot Thuis gebruikt, kiest een paar vertrouwenspersonen en kan hen een test sturen. Die test is een sms met een link naar deze pagina.</p>
@@ -25,6 +27,15 @@
     <p id="uitnodiging-link"></p>
   </section>
 </main>
+<footer class="voet">
+  <div class="breed">
+    <a class="merk" href="./">Tot Thuis</a>
+    <p class="regels">
+      <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>
+      <a href="privacy">Privacy</a>
+    </p>
+  </div>
+</footer>
 <script type="module">
   import { API } from './test/config.js'
   import { inhoud, staatNaAntwoord, tokenUitHash } from './test/pagina.js'

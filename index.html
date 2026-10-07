@@ -3,33 +3,171 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Tot Thuis is een app voor wie alleen naar huis fietst. Hier lees je wat een sms van TotThuis betekent.">
+<meta name="description" content="Tot Thuis is een app voor wie alleen naar huis fietst. Laat je niet op tijd weten dat je er bent, dan stuurt de app een bericht naar mensen die je zelf hebt gekozen.">
 <title>Tot Thuis</title>
 <link rel="stylesheet" href="stijl.css">
 </head>
 <body>
+<header class="breed kop">
+  <a class="merk" href="./">Tot Thuis</a>
+  <nav aria-label="Op deze pagina">
+    <a href="#hoe">Hoe het werkt</a>
+    <a href="privacy">Privacy</a>
+    <a href="#english" lang="en">In English</a>
+  </nav>
+</header>
+
 <main>
-  <h1>Tot Thuis</h1>
-  <p>Tot Thuis is een app voor wie alleen naar huis fietst. Laat je niet op tijd weten dat je er bent en reageer je ook niet, dan stuurt de app een bericht naar mensen die je zelf hebt gekozen. De app zorgt er niet voor dat je thuiskomt, wel dat het opvalt als je niet thuiskomt.</p>
-
-  <section>
-    <h2>Je kreeg een sms van TotThuis</h2>
-    <p>Dan heeft iemand die je kent jou opgegeven als vertrouwenspersoon. Wie dat is, staat in de sms.</p>
-    <p>In een test staat een link naar een pagina op totthuis.nl met één knop. Tik je op die knop, dan ziet de afzender dat je gereageerd hebt. Alleen de link openen doet niets.</p>
-    <p>Krijg je een sms over een alarm, bel dan de persoon om wie het gaat.</p>
-    <p>Een sms van TotThuis en de pagina achter de link vragen nooit om geld, een wachtwoord of gegevens. Vraagt een bericht daar wel om, dan komt het niet van ons.</p>
+  <section class="breed opening">
+    <div>
+      <h1>App je even als je thuis bent? <span>Tot&nbsp;Thuis maakt die vraag overbodig.</span></h1>
+      <p class="uitleg">Je zet een rit aan en de app houdt de tijd bij, tot jij laat weten dat je er bent.</p>
+      <p class="stand gedempt klein">In een testfase op iPhone. Nog niet te downloaden.</p>
+    </div>
+    <div>
+      <div class="toestellen">
+        <figure class="toestel"><img src="beeld/keten.png" width="780" height="1688" alt="Het scherm Je keten: Anne en Bas staan als vertrouwenspersonen op volgorde, en Anne heeft op 2 oktober op een test gereageerd."></figure>
+        <figure class="toestel"><img src="beeld/rit.png" width="780" height="1688" alt="Het scherm tijdens een rit: bewaakt, onderweg naar Thuis, verwacht om 23:32, en Anne kijkt mee."></figure>
+      </div>
+      <p class="onderschrift gedempt klein">Twee schermen uit de app, met voorbeeldnamen.</p>
+    </div>
   </section>
 
-  <section>
-    <h2>Nog in een testfase</h2>
-    <p>De app is nog niet te downloaden en wordt alleen gebruikt door een kleine kring rond de maker. In deze fase kan er nog iets misgaan.</p>
+  <section class="blok">
+    <div class="breed">
+      <div class="smal">
+        <h2>Wat Tot Thuis is</h2>
+        <p>Tot Thuis is een app voor wie alleen naar huis fietst. Laat je niet op tijd weten dat je er bent en reageer je ook niet, dan stuurt de app een bericht naar mensen die je zelf hebt gekozen. De app zorgt er niet voor dat je thuiskomt, wel dat het opvalt als je niet thuiskomt.</p>
+      </div>
+    </div>
   </section>
 
-  <section>
-    <h2>Wie erachter zit</h2>
-    <p>Tot Thuis wordt gemaakt door Mischa van Schajik in Zaandam.</p>
-    <p>Een vraag, of iets gezien wat niet klopt? Mail naar <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>.</p>
+  <section class="blok vlak">
+    <div class="breed">
+      <h2>Waarom dit nodig is</h2>
+      <div class="cijfers">
+        <article class="cijfer">
+          <p class="getal">60%</p>
+          <p>van de vrouwen van 15 tot 25 jaar voelt zich weleens onveilig, tegen 27 procent van de mannen van die leeftijd.</p>
+          <p class="bron klein gedempt">Bron: <a href="https://www.cbs.nl/nl-nl/nieuws/2026/10/meer-mensen-voelen-zich-onveilig">CBS, Veiligheidsmonitor 2025</a></p>
+        </article>
+        <article class="cijfer">
+          <p class="getal">2 op 3</p>
+          <p>vrouwen van 12 tot 25 jaar zegt in een jaar tijd weleens op straat te zijn lastiggevallen. Ruim een derde van hen zoekt op zo’n moment gezelschap of belt iemand op.</p>
+          <p class="bron klein gedempt">Bron: <a href="https://jeugdmonitor.cbs.nl/publicatie/Twee-op-de-drie-jonge-vrouwen-lastiggevallen-op-straat">CBS Jeugdmonitor, 2022</a> (cijfers over 2020 en 2021)</p>
+        </article>
+        <article class="cijfer">
+          <p class="getal">95,7%</p>
+          <p>van de vrouwen voelt zich weleens onveilig op de fiets in het donker, tegen 82 procent van de mannen. Uit een verkennend onderzoek onder 5.190 fietsers.</p>
+          <p class="bron klein gedempt">Bron: <a href="https://www.fietsersbond.nl/nieuws/onderzoek-fietsen-in-het-donker/">Fietsersbond, 2022</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="blok" id="hoe">
+    <div class="breed">
+      <div class="smal">
+        <h2>Hoe het werkt</h2>
+        <ol class="stappen">
+          <li>
+            <span class="nummer" aria-hidden="true">1</span>
+            <div>
+              <h3>Kies wie je vertrouwt</h3>
+              <p>Je zet een paar mensen in de app, in de volgorde waarin de app ze bij een alarm benadert. Daarna stuur je ze een test. Zo weten ze wat Tot Thuis is, en zie jij dat ze reageren.</p>
+              <figure class="sms">
+                <figcaption>Zo ziet de test eruit, van afzender TotThuis:</figcaption>
+                <blockquote>Mila heeft jou opgegeven als vertrouwenspersoon bij Tot Thuis. Dit is een test. Tik op de link om te laten zien dat het aankomt. https://totthuis.nl/t#…</blockquote>
+              </figure>
+              <p class="klein gedempt">Achter het # staat een code die alleen bij deze ene test hoort en na korte tijd verloopt.</p>
+            </div>
+          </li>
+          <li>
+            <span class="nummer" aria-hidden="true">2</span>
+            <div>
+              <h3>Zet een rit aan</h3>
+              <p>Je kiest waar je heen fietst en hoe lang je erover doet. Onderweg geeft je telefoon de server een teken van leven, en de server houdt de klok bij.</p>
+            </div>
+          </li>
+          <li>
+            <span class="nummer" aria-hidden="true">3</span>
+            <div>
+              <h3>Laat weten dat je er bent</h3>
+              <p>Ben je thuis, dan tik je op Ik ben er. Laat je niets weten en reageer je ook niet op de vraag van de app, of hoort de server niets meer van je telefoon, dan stuurt de app een bericht naar je eerste vertrouwenspersoon. Reageert die niet, dan gaat het naar de volgende.</p>
+              <p>De app belt nooit zelf de hulpdiensten.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="blok vlak">
+    <div class="breed">
+      <div class="smal">
+        <h2>Je kreeg een sms van TotThuis</h2>
+        <p>Dan heeft iemand die je kent jou opgegeven als vertrouwenspersoon. Wie dat is, staat in de sms.</p>
+        <p>In een test staat een link naar een pagina op totthuis.nl met één knop. Tik je op die knop, dan ziet de afzender dat je gereageerd hebt. Alleen de link openen doet niets.</p>
+        <p>Krijg je een sms over een alarm, bel dan de persoon om wie het gaat.</p>
+        <p>Een sms van TotThuis en de pagina achter de link vragen nooit om geld, een wachtwoord of gegevens. Vraagt een bericht daar wel om, dan komt het niet van ons.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blok">
+    <div class="breed">
+      <h2>Waar we staan en wat er komt</h2>
+      <div class="tijdlijn">
+        <section class="fase nu">
+          <h3>Nu</h3>
+          <p>Een testfase met een kleine kring rond de maker. De app werkt alleen op iPhone en is nog niet te downloaden.</p>
+        </section>
+        <section class="fase">
+          <h3>Daarna</h3>
+          <p>Een eerste groep testers.</p>
+        </section>
+        <section class="fase">
+          <h3>Als richting</h3>
+          <p>Zonder datum en zonder belofte: een versie voor Android, en samen fietsen met mensen die je kent, waarbij de app het laatste stuk dat je alleen fietst blijft bewaken. Ook onderzoeken we of Tot Thuis geschikt is voor wie loopt.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="blok vlak">
+    <div class="breed">
+      <div class="smal">
+        <h2>Wie erachter zit</h2>
+        <p>Tot Thuis wordt gemaakt door Mischa van Schajik, Zaandam.</p>
+        <p>Een vraag, of iets gezien wat niet klopt? Mail naar <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blok" id="english" lang="en">
+    <div class="breed">
+      <div class="smal">
+        <h2>In English</h2>
+        <p>Tot Thuis (Dutch for “until home”) is an app for people who cycle home alone. You start a ride. If you do not confirm in time that you have arrived and do not respond, the app sends a text message to people you chose yourself. It does not make sure you get home; it makes sure someone notices when you don’t. It never contacts emergency services itself.</p>
+        <p>Text messages from TotThuis go only to the trusted contacts a user has entered in the app, and only to Dutch mobile numbers (+31). A contact is sent a test message when the user tests them, and an alert when a ride goes wrong. There is no marketing and no payment: the messages never advertise anything, and neither the messages nor this website ask for money, passwords or personal details.</p>
+        <p>A test message contains one link, of the form https://totthuis.nl/t#&lt;token&gt;. The token belongs to that one test only and expires. Opening the link does nothing; the contact taps a button on the page, so the user can see that they responded.</p>
+        <p>Tot Thuis is in a test phase with a small circle around its maker. It runs on iPhone only and is not available for download.</p>
+        <p>Tot Thuis is made by Mischa van Schajik, Zaandam, the Netherlands. Messages are sent with the sender name TotThuis through the EU platform of GatewayAPI. Contact: <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>.</p>
+      </div>
+    </div>
   </section>
 </main>
+
+<footer class="voet">
+  <div class="breed">
+    <a class="merk" href="./">Tot Thuis</a>
+    <p class="regels">
+      <span>Mischa van Schajik, Zaandam</span>
+      <a href="mailto:info@totthuis.nl">info@totthuis.nl</a>
+      <a href="privacy">Privacy</a>
+      <a href="#english" lang="en">In English</a>
+    </p>
+  </div>
+</footer>
 </body>
 </html>
