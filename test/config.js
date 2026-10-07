@@ -1,4 +1,4 @@
-// Waar de knop de reactie heen stuurt: de functie `test` van SamenFiets.
+// Waar de knop de reactie heen stuurt: de functie `test` van Tot Thuis.
 // Een publiek adres, zoals in de app; er staat geen sleutel in. De pagina
 // staat op totthuis.nl/t (t.html); het adres van de functie blijft gelijk,
 // alleen test_link_basis in de database en de DNS bepalen waar de link heen
