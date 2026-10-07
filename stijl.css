@@ -58,8 +58,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--inkt); outline-
 
 /* Kop en woordmerk */
 .kop { display: flex; align-items: center; justify-content: space-between; gap: 10px 24px; padding-top: 22px; padding-bottom: 22px; flex-wrap: wrap; }
-.merk { display: inline-flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--inkt); text-decoration: none; }
-.merk::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+/* Het woordmerk is een vorm uit scripts/maak-woordmerk.py, in twee varianten
+   uit dezelfde vector: donkere letters op licht (de kop), lichte letters op
+   donker (de voet). De stip is in beide de accentkleur (DESIGNSYSTEEM,
+   Woordmerk). */
+.merk { display: inline-block; line-height: 0; color: var(--inkt); text-decoration: none; }
+.merk svg { display: block; width: 84px; height: auto; }
+.merk .stip { fill: var(--accent); }
 .kop nav { display: flex; gap: 6px 20px; flex-wrap: wrap; font-size: 15px; }
 
 /* De opening */
@@ -103,7 +108,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--inkt); outline-
 
 /* De voet */
 .voet { background: var(--nacht); color: var(--nacht-tekst); padding-top: 44px; padding-bottom: 44px; }
-.voet a, .voet .merk { color: inherit; }
+.voet a { color: inherit; }
+.voet .merk { color: var(--nacht-tekst); }
 .voet .regels { display: flex; flex-wrap: wrap; gap: 10px 30px; margin-top: 16px; font-size: 15px; }
 
 /* De testpagina en de privacypagina: één kolom */
@@ -132,7 +138,8 @@ button[disabled] { opacity: 0.6; cursor: default; }
 [hidden] { display: none !important; }
 
 @media (min-width: 760px) {
-  .breed { padding: 0 32px; }
+  /* Alleen opzij: de kop houdt zo zijn ruimte boven en onder. */
+  .breed { padding-left: 32px; padding-right: 32px; }
   .opening { grid-template-columns: 1.1fr 1fr; align-items: center; padding-top: 30px; padding-bottom: 96px; }
   .cijfers { grid-template-columns: repeat(3, 1fr); }
   .blok { padding-top: 96px; padding-bottom: 96px; }
