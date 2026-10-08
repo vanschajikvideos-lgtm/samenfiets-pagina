@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["URS5J8WHJ4.nl.totthuis.app"],
+        "components": [
+          {
+            "/": "/u",
+            "comment": "De uitnodiging om vertrouwenspersoon te zijn: https://totthuis.nl/u#<token>. Opent de app als die er is, anders de pagina."
+          }
+        ]
+      }
+    ]
+  }
+}
