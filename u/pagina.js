@@ -68,11 +68,16 @@ function vraag(staat, verzoek) {
   return { staat: { ...staat, bezig: true, wacht: verzoek }, verzoek }
 }
 
-/** Het begin: zonder token de uitleg; met een token alleen bekijken. */
+/**
+ * Het begin: zonder iets achter de # de uitleg; met iets dat geen token is
+ * (afgekapt of verminkt) zegt de pagina dat de link niet werkt, zonder vraag;
+ * met een token alleen bekijken.
+ */
 export function begin(hash) {
   const token = tokenUitHash(hash)
-  if (!token) return rust({ soort: 'geen_token' })
-  return vraag({ soort: 'laden', token }, { token })
+  if (token) return vraag({ soort: 'laden', token }, { token })
+  if ((hash ?? '').replace(/^#/, '').trim() === '') return rust({ soort: 'geen_token' })
+  return rust({ soort: 'onbekend' })
 }
 
 /** Een knop. Zolang er een vraag loopt, doet geen enkele knop iets. */
@@ -132,12 +137,14 @@ export function naAntwoord(staat, status, body) {
   const b = body !== null && typeof body === 'object' ? body : {}
   const naam = typeof b.naam === 'string' && b.naam.length > 0 ? b.naam : (staat.naam ?? 'je contact')
   const storing = rust({ soort: 'storing', terug: staat })
-  if (status === 404) return rust({ soort: 'verlopen' })
+  // Bij het laden: een token dat de server niet kent. Daarna: de link verliep onderweg.
+  if (status === 404) return rust({ soort: soortVan(v) === 'bekijk' ? 'onbekend' : 'verlopen' })
   if (status === 200 && b.uitkomst === 'al_beantwoord') return rust({ soort: 'beantwoord' })
   switch (soortVan(v)) {
     case 'bekijk':
       if (status !== 200) return storing
-      if (b.status === 'verlopen' || b.status === 'onbekend') return rust({ soort: 'verlopen' })
+      if (b.status === 'onbekend') return rust({ soort: 'onbekend' })
+      if (b.status === 'verlopen') return rust({ soort: 'verlopen' })
       if (b.status === 'open' && b.soort === 'deel') return rust({ soort: 'vraag', token: v.token, naam })
       if (b.status === 'open' && b.soort === 'controle') return rust({ soort: 'controle', token: v.token, naam })
       // Zij zei ja, maar er ging nog geen controle-sms: dan een knop om hem alsnog te vragen, en niets vanzelf.
@@ -253,6 +260,13 @@ export function inhoud(staat) {
       }
     case 'bereikbaar':
       return { ...LEEG, titel: 'Dank je', alineas: [`${naam} ziet nu dat je nummer werkt.`], verder: VERDER }
+    case 'onbekend':
+      return {
+        ...LEEG,
+        titel: 'Deze link werkt niet',
+        alineas: ['Open de hele link uit het bericht nog eens, of vraag om een nieuwe.'],
+        verder: VERDER,
+      }
     case 'verlopen':
       return {
         ...LEEG,
