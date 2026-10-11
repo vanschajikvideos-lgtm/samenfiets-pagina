@@ -9,8 +9,8 @@
 //     body, naar de functie u van Tot Thuis.
 //   · Openen is geen antwoord. Bij het laden gaat er alleen een vraag om te
 //     bekijken, en die verandert niets: berichtenapps openen een link vanzelf
-//     voor een voorbeeld. Ook de link uit de controle-sms bevestigt pas op de
-//     knop.
+//     voor een voorbeeld. De vier cijfers uit de controle-sms gaan pas op de
+//     knop, en alleen zoals zij ze typte.
 //   · Nee is definitief, dus de pagina vraagt het een keer na. Het antwoord
 //     nee gaat pas na "Ja, ik wil dit niet".
 //   · "Ja, ik weet ervan" is nog niet de ja: eerst de nummerstap. Het
@@ -24,6 +24,18 @@ const VERDER = { tekst: 'Meer over Tot Thuis', href: './' }
 
 /** De uitkomsten van de controle-sms die de functie kent (api.ts). */
 const CONTROLE_SMS = ['wordt_gestuurd', 'morgen', 'niet_nodig']
+
+/** Precies vier cijfers; spaties tellen niet mee. */
+const CIJFERS = /^[0-9]{4}$/
+
+/**
+ * Per fout bij de vier cijfers een vaste zin; zij kan daarna opnieuw typen.
+ * Beide goedgekeurd op 11 oktober.
+ */
+const CIJFERFOUT = {
+  onjuist: 'Die cijfers kloppen niet. Kijk nog even in de sms.',
+  vier: 'Vul de vier cijfers uit de sms in.',
+}
 
 /** Per fout van haar eigen nummer een vaste zin; zij kan daarna opnieuw typen. */
 const NUMMERFOUT = {
@@ -111,10 +123,18 @@ export function naKnop(staat, knop, invoer) {
       )
     case 'teruglezen aanpassen':
       return rust({ soort: 'eigen', token, naam, nummer, invoer: staat.invoer, fout: null })
-    case 'controle bevestig':
-      return vraag({ soort: 'controle', token, naam }, { token, bereikbaar: true })
+    case 'cijfers bevestig': {
+      const code = String(invoer ?? '').replace(/\s/g, '')
+      const blijf = { soort: 'cijfers', token, naam, aanleiding: staat.aanleiding }
+      if (!CIJFERS.test(code)) return rust({ ...blijf, invoer: String(invoer ?? ''), fout: 'vier' })
+      return vraag({ ...blijf, invoer: code, fout: null }, { token, code })
+    }
     case 'nog_niet_gecontroleerd stuur_sms':
       return vraag({ soort: 'nog_niet_gecontroleerd', token, naam }, { token, stap: 'controle' })
+    case 'te_vaak nieuwe_sms':
+    case 'cijfers_verlopen nieuwe_sms':
+      if (!staat.nieuw) return rust(staat)
+      return vraag({ soort: staat.soort, token, naam, nieuw: true }, { token, stap: 'controle' })
     case 'storing opnieuw':
       return vraag({ ...staat.terug, bezig: false, wacht: null }, staat.terug.wacht)
   }
@@ -126,7 +146,7 @@ function soortVan(verzoek) {
   if ('antwoord' in verzoek) return 'antwoord'
   if (verzoek.stap === 'nummer') return 'nummer'
   if (verzoek.stap === 'controle') return 'nummercontrole'
-  if (verzoek.bereikbaar === true) return 'bereikbaar'
+  if ('code' in verzoek) return 'code'
   return 'bekijk'
 }
 
@@ -146,28 +166,37 @@ export function naAntwoord(staat, status, body) {
       if (b.status === 'onbekend') return rust({ soort: 'onbekend' })
       if (b.status === 'verlopen') return rust({ soort: 'verlopen' })
       if (b.status === 'open' && b.soort === 'deel') return rust({ soort: 'vraag', token: v.token, naam })
-      if (b.status === 'open' && b.soort === 'controle') return rust({ soort: 'controle', token: v.token, naam })
-      // Zij zei ja, maar er ging nog geen controle-sms: dan een knop om hem alsnog te vragen, en niets vanzelf.
-      if (b.status === 'beantwoord' && b.soort === 'deel' && b.controle_mogelijk === true) return rust({ soort: 'nog_niet_gecontroleerd', token: v.token, naam })
-      if (b.status === 'beantwoord' && b.soort === 'deel') return rust({ soort: 'beantwoord' })
-      if (b.status === 'beantwoord' && b.soort === 'controle') return rust({ soort: 'bereikbaar', naam })
-      return storing
+      if (b.status !== 'beantwoord' || b.soort !== 'deel') return storing
+      // Zij zei ja en opent de link opnieuw: de vier cijfers invullen, of na te vaak fout een nieuwe sms, of de knop om hem alsnog te vragen. Niets vanzelf.
+      if (b.code_verwacht === true) return rust({ soort: 'cijfers', token: v.token, naam, aanleiding: 'terug', invoer: '', fout: null })
+      if (b.code_te_vaak === true) return rust({ soort: 'te_vaak', token: v.token, naam, nieuw: b.nieuwe_sms_mogelijk === true })
+      if (b.controle_mogelijk === true) return rust({ soort: 'nog_niet_gecontroleerd', token: v.token, naam })
+      return rust({ soort: 'beantwoord' })
     case 'nummer':
       if (status === 200 && typeof b.nummer === 'string' && b.nummer.length > 0) return rust({ soort: 'nummer', token: v.token, naam, nummer: b.nummer })
       return storing
     case 'antwoord':
       if (v.antwoord === 'nee') return status === 200 && b.uitkomst === 'nee' ? rust({ soort: 'weg', naam }) : storing
+      if (status === 200 && b.uitkomst === 'ja' && b.controle_sms === 'wordt_gestuurd') return rust({ soort: 'cijfers', token: v.token, naam, aanleiding: 'ja', invoer: '', fout: null })
       if (status === 200 && b.uitkomst === 'ja' && CONTROLE_SMS.includes(b.controle_sms)) return rust({ soort: 'ja', naam, sms: b.controle_sms })
       if (status === 422 && v.nummer_klopt === false && Object.prototype.hasOwnProperty.call(NUMMERFOUT, b.code)) {
         return rust({ soort: 'eigen', token: v.token, naam, nummer: staat.nummer, invoer: staat.invoer, fout: b.code })
       }
       return storing
     case 'nummercontrole':
+      // Na "Stuur de sms" dezelfde teksten als na de ja; na "Stuur een nieuwe sms" een eigen kop.
+      if (status === 200 && b.uitkomst === 'wordt_gestuurd') return rust({ soort: 'cijfers', token: v.token, naam, aanleiding: staat.soort === 'nog_niet_gecontroleerd' ? 'ja' : 'nieuw', invoer: '', fout: null })
       if (status === 200 && CONTROLE_SMS.includes(b.uitkomst)) return rust({ soort: 'ja', naam, sms: b.uitkomst })
       return storing
-    case 'bereikbaar':
-      if (status === 200 && (b.uitkomst === 'bevestigd' || b.uitkomst === 'al_bevestigd')) return rust({ soort: 'bereikbaar', naam })
+    case 'code': {
+      if (status !== 200) return storing
+      const nieuw = b.nieuwe_sms_mogelijk === true
+      if (b.uitkomst === 'bevestigd' || b.uitkomst === 'al_bevestigd') return rust({ soort: 'bereikbaar', naam })
+      if (b.uitkomst === 'onjuist') return rust({ soort: 'cijfers', token: v.token, naam, aanleiding: staat.aanleiding, invoer: '', fout: 'onjuist' })
+      if (b.uitkomst === 'te_vaak') return rust({ soort: 'te_vaak', token: v.token, naam, nieuw })
+      if (b.uitkomst === 'verlopen') return rust({ soort: 'cijfers_verlopen', token: v.token, naam, nieuw })
       return storing
+    }
   }
   return storing
 }
@@ -234,7 +263,7 @@ export function inhoud(staat) {
         ...LEEG,
         titel: 'Wat is je nummer?',
         fout: staat.fout ? NUMMERFOUT[staat.fout](naam) : null,
-        veld: { label: 'Je mobiele nummer', waarde: staat.invoer ?? '' },
+        veld: { label: 'Je mobiele nummer', waarde: staat.invoer ?? '', soort: 'nummer', knop: 'verder' },
         knoppen: [knop('verder', 'Verder'), knop('terug', 'Terug', true)],
       }
     case 'teruglezen':
@@ -251,13 +280,19 @@ export function inhoud(staat) {
         alineas: [`${naam} ziet nu dat je ervan weet.`, ...naDeJa(staat.sms, naam)],
         verder: VERDER,
       }
-    case 'controle':
+    case 'cijfers':
       return {
         ...LEEG,
-        titel: 'Deze sms kwam aan',
-        alineas: [`Tik op de knop, dan ziet ${naam} dat Tot Thuis je kan bereiken.`],
-        knoppen: [knop('bevestig', 'Het is aangekomen')],
+        ...KOP_BIJ_CIJFERS[staat.aanleiding](naam),
+        fout: staat.fout ? CIJFERFOUT[staat.fout] : null,
+        veld: { label: 'De vier cijfers uit de sms', waarde: staat.invoer ?? '', soort: 'cijfers', knop: 'bevestig' },
+        knoppen: [knop('bevestig', 'Bevestigen')],
       }
+    case 'te_vaak':
+      return { ...LEEG, titel: 'Dat ging een paar keer mis', ...nieuweSms(staat.nieuw) }
+    case 'cijfers_verlopen':
+      // Goedgekeurd op 11 oktober.
+      return { ...LEEG, titel: 'Deze cijfers gelden niet meer', ...nieuweSms(staat.nieuw) }
     case 'bereikbaar':
       return { ...LEEG, titel: 'Dank je', alineas: [`${naam} ziet nu dat je nummer werkt.`], verder: VERDER }
     case 'onbekend':
@@ -282,12 +317,8 @@ export function inhoud(staat) {
         knoppen: [knop('stuur_sms', 'Stuur de sms')],
       }
     case 'beantwoord':
-      return {
-        ...LEEG,
-        titel: 'Je hebt deze uitnodiging al beantwoord',
-        alineas: ['Kwam er daarna een sms van Tot Thuis om je nummer te controleren, tik dan op de link in die sms.'],
-        verder: VERDER,
-      }
+      // 11 oktober: de zin over de link in de controle-sms is weg; die sms draagt geen link meer.
+      return { ...LEEG, titel: 'Je hebt deze uitnodiging al beantwoord', verder: VERDER }
     case 'storing':
       return { ...LEEG, titel: 'Dat lukte niet', alineas: ['Probeer het zo nog eens.'], knoppen: [knop('opnieuw', 'Opnieuw')] }
   }
@@ -295,17 +326,34 @@ export function inhoud(staat) {
 }
 
 /**
- * Na de ja, of na "Stuur de sms": wat er met de controle-sms gebeurt. Niets
- * beloven wat niet vanzelf komt; bij morgen opent zij dezelfde link opnieuw,
- * en dan staat de knop er.
+ * De kop boven het veld voor de vier cijfers, naar waar zij vandaan komt: na
+ * de ja (en na "Stuur de sms"), na "Stuur een nieuwe sms", of als zij de link
+ * opnieuw opent. Alle drie goedgekeurd op 11 oktober.
+ */
+const KOP_BIJ_CIJFERS = {
+  ja: (naam) => ({
+    titel: 'Dank je',
+    alineas: [`${naam} ziet nu dat je ervan weet.`, `We sturen je een sms met vier cijfers. Vul ze hieronder in, dan weet ${naam} dat je nummer werkt.`],
+  }),
+  nieuw: (naam) => ({ titel: 'We sturen je een nieuwe sms', alineas: [`Vul de vier cijfers hieronder in, dan weet ${naam} dat je nummer werkt.`] }),
+  terug: (naam) => ({ titel: 'Nog één stap', alineas: [`Vul de vier cijfers uit de sms hieronder in, dan weet ${naam} dat je nummer werkt.`] }),
+}
+
+/**
+ * Na te vaak fout, of als de cijfers niet meer gelden: een nieuwe sms als dat
+ * vandaag nog kan, anders morgen (goedgekeurd op 11 oktober). Niets vanzelf.
+ */
+function nieuweSms(kan) {
+  if (kan) return { knoppen: [knop('nieuwe_sms', 'Stuur een nieuwe sms')] }
+  return { alineas: ['Morgen kun je een nieuwe sms aanvragen.'], verder: VERDER }
+}
+
+/**
+ * Na de ja, of na een nieuwe sms, als die vandaag niet meer kan of niet nodig
+ * is. Niets beloven wat niet vanzelf komt; bij morgen opent zij dezelfde link
+ * opnieuw, en dan staat de knop er.
  */
 function naDeJa(sms, naam) {
-  if (sms === 'wordt_gestuurd') {
-    return [
-      `We sturen je nu één sms. Tik op de link daarin en dan op de knop, zodat ${naam} ziet dat je nummer werkt.`,
-      'De app is nog niet te downloaden; deze pagina werkt ook zonder app.',
-    ]
-  }
   if (sms === 'morgen') return ['Vandaag kunnen we je geen sms meer sturen om je nummer te controleren. Open deze link morgen nog eens, dan kan het wel.']
   return ['Een sms om je nummer te controleren is niet nodig: je hebt de app van Tot Thuis al.']
 }

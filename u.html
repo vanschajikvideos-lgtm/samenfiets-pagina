@@ -63,7 +63,14 @@
     $('veld').hidden = !i.veld
     if (i.veld) {
       $('veld-label').textContent = i.veld.label
-      $('nummer').value = i.veld.waarde
+      // Haar nummer met het telefoontoetsenbord; de vier cijfers met het cijfertoetsenbord, en de telefoon mag ze uit de sms aanbieden.
+      const veld = $('nummer')
+      const cijfers = i.veld.soort === 'cijfers'
+      veld.type = cijfers ? 'text' : 'tel'
+      veld.inputMode = cijfers ? 'numeric' : 'tel'
+      veld.autocomplete = cijfers ? 'one-time-code' : 'tel'
+      veld.maxLength = cijfers ? 6 : 20
+      veld.value = i.veld.waarde
     }
     $('knoppen').replaceChildren(
       ...i.knoppen.map((k) => {
@@ -112,7 +119,8 @@
     if (knop) void ga(naKnop(staat, knop.dataset.knop, $('nummer').value))
   })
   $('nummer').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') void ga(naKnop(staat, 'verder', $('nummer').value))
+    const veld = inhoud(staat).veld
+    if (e.key === 'Enter' && veld) void ga(naKnop(staat, veld.knop, $('nummer').value))
   })
   // Een andere link in hetzelfde tabblad: opnieuw beginnen, met alleen bekijken.
   addEventListener('hashchange', () => location.reload())
