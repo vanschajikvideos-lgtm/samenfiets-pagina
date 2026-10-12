@@ -51,7 +51,7 @@ export function inhoud(staat) {
     case 'vraag':
       return {
         titel: 'Dit is een test van Tot Thuis',
-        alineas: ['Je bent opgegeven als vertrouwenspersoon. Tik op de knop om te laten zien dat dit bericht aankomt.'],
+        alineas: ['Iemand die je kent heeft je toegevoegd in Tot Thuis. Tik op de knop om te laten zien dat dit bericht aankomt.'],
         knop: 'Het is aangekomen',
         uitnodiging: null,
         verder: null,
@@ -67,7 +67,7 @@ export function inhoud(staat) {
           ? null
           : {
               titel: 'De app',
-              tekst: 'Met de app Tot Thuis zie je bij een alarm waar zij is, kun je zeggen dat je ermee bezig bent, en kun je het alarm afsluiten.',
+              tekst: 'Met de app Tot Thuis zie je bij een alarm de laatste locatie, kun je zeggen dat je ermee bezig bent, en kun je het alarm afsluiten.',
               link: staat.appLink,
               zonderLink: 'De app is er nog niet. Tot die tijd werkt deze pagina.',
             },
@@ -77,7 +77,7 @@ export function inhoud(staat) {
       return {
         titel: 'Deze pagina hoort bij een test van Tot Thuis',
         alineas: [
-          'Wie Tot Thuis gebruikt, kiest een paar vertrouwenspersonen en kan hen een test sturen. Die test is een sms met een link naar deze pagina.',
+          'Wie Tot Thuis gebruikt, kiest een paar mensen en kan hen een test sturen. Die test is een sms met een link naar deze pagina.',
           'Kwam je hier via zo’n sms, open dan de hele link uit het bericht nog eens. Zonder die link is hier niets te doen.',
         ],
         knop: null,

@@ -19,6 +19,21 @@
 
 const TOKEN = /^[0-9a-f]{32}$/
 
+/**
+ * "Mila's mensen", "Pims mensen", "Klaas' mensen": de bezitsvorm zoals in de
+ * app (src/toestand/afleiden.ts, bezit). Het woord "keten" en het woord
+ * "vertrouwenspersoon" staan niet meer in wat zij of haar mensen lezen
+ * (SPECIFICATIE, woorden in de app; ontwerpronde, voorstel van 12 oktober).
+ */
+export function bezit(naam) {
+  if (/(s|sch|x|z|ce)$/i.test(naam)) return `${naam}'`
+  if (/[aiouy]$/i.test(naam) || /[^e]é$/i.test(naam)) return `${naam}'s`
+  return `${naam}s`
+}
+
+/** Een zin begint met een hoofdletter, ook als de naam "je contact" is (geen bijnaam). */
+const zin = (tekst) => tekst.charAt(0).toUpperCase() + tekst.slice(1)
+
 /** Naar de voorpagina, onder elke pagina waar verder niets te doen is. */
 const VERDER = { tekst: 'Meer over Tot Thuis', href: './' }
 
@@ -41,8 +56,8 @@ const CIJFERFOUT = {
 const NUMMERFOUT = {
   nummer_ongeldig: () => 'Dit is geen Nederlands nummer. Typ het zoals 06 12 34 56 78.',
   nummer_van_rijder: (naam) => `Dit is het nummer van ${naam} zelf. Typ je eigen nummer.`,
-  nummer_al_in_keten: (naam) => `Dit nummer staat al in de keten van ${naam}.`,
-  nummer_geweigerd: (naam) => `Met dit nummer is al eens nee gezegd. Het kan niet meer in de keten van ${naam}.`,
+  nummer_al_in_keten: (naam) => `Dit nummer hoort al bij ${bezit(naam)} mensen.`,
+  nummer_geweigerd: (naam) => `Met dit nummer is al eens nee gezegd. Het kan niet meer bij ${bezit(naam)} mensen.`,
 }
 
 /** Het token uit het #-deel van de link, of null als het er niet is of niet klopt. */
@@ -204,7 +219,7 @@ export function naAntwoord(staat, status, body) {
 const knop = (id, tekst, tweede = false) => ({ id, tekst, tweede })
 
 /** Een lege pagina; elke staat vult alleen wat hij nodig heeft. */
-const LEEG = { titel: '', alineas: [], opmerking: null, groot: null, vraag: null, fout: null, veld: null, knoppen: [], verder: null }
+const LEEG = { titel: '', alineas: [], stoppen: null, opmerking: null, groot: null, vraag: null, fout: null, veld: null, knoppen: [], verder: null }
 
 /**
  * De inhoud per staat, als platte tekst. u.html zet alles via textContent op
@@ -218,7 +233,7 @@ export function inhoud(staat) {
         ...LEEG,
         titel: 'Deze pagina hoort bij een uitnodiging van Tot Thuis',
         alineas: [
-          'Wie Tot Thuis gebruikt, kiest een paar vertrouwenspersonen en stuurt hen zelf een link naar deze pagina. Hier zeg je of je dat wilt.',
+          'Wie Tot Thuis gebruikt, kiest een paar mensen en stuurt hen zelf een link naar deze pagina. Hier zeg je of je dat wilt.',
           'Kwam je hier via zo’n link of een sms van Tot Thuis, open dan de hele link uit het bericht nog eens. Zonder die link is hier niets te doen.',
         ],
         verder: VERDER,
@@ -228,32 +243,33 @@ export function inhoud(staat) {
     case 'vraag':
       return {
         ...LEEG,
-        titel: `${naam} vraagt of je vertrouwenspersoon wilt zijn`,
+        titel: `Wil je een van ${bezit(naam)} mensen zijn?`,
         alineas: [
-          `${naam} gebruikt Tot Thuis als ze alleen naar huis fietst. Laat ze niet op tijd weten dat ze er is en reageert ze niet, dan stuurt Tot Thuis jou een bericht, zodat je haar kunt bellen. Bij een gewone rit sturen we je niets.`,
+          `${zin(naam)} gebruikt Tot Thuis onderweg naar huis. Komt er geen bevestiging van aankomst en geen reactie, dan sturen we jou een bericht, zodat je kunt bellen.`,
         ],
         opmerking: 'Staat je telefoon op stil, dan hoor je een alarm van Tot Thuis niet. Alleen je scherm licht op. Wil je ook ’s nachts bereikbaar zijn, laat het geluid dan aan.',
         vraag: 'Zeg je ja, dan sturen we je één sms om te controleren of je nummer werkt.',
-        knoppen: [knop('ja_ik_weet_ervan', 'Ja, ik weet ervan'), knop('wil_niet', 'Ik wil dit niet', true)],
+        // Besluit 11 oktober (ontwerpronde): "Ja, dat wil ik" en "Nee, liever niet".
+        knoppen: [knop('ja_ik_weet_ervan', 'Ja, dat wil ik'), knop('wil_niet', 'Nee, liever niet', true)],
       }
     case 'zeker':
       return {
         ...LEEG,
         titel: 'Weet je het zeker?',
-        alineas: [`${naam} kan je nummer daarna niet opnieuw toevoegen.`],
+        alineas: [`${zin(naam)} kan je nummer daarna niet opnieuw toevoegen.`],
         knoppen: [knop('zeker_wil_niet', 'Ja, ik wil dit niet'), knop('terug', 'Terug', true)],
       }
     case 'weg':
       return {
         ...LEEG,
-        titel: `Je nummer is uit de keten van ${naam}`,
+        titel: `Je bent niet langer een van ${bezit(naam)} mensen`,
         alineas: [`Tot Thuis stuurt je geen berichten meer over ${naam}.`],
         verder: VERDER,
       }
     case 'nummer':
       return {
         ...LEEG,
-        titel: `${naam} gaf dit nummer voor je op`,
+        titel: `${zin(naam)} gaf dit nummer voor je op`,
         groot: staat.nummer,
         vraag: 'Klopt dat?',
         knoppen: [knop('nummer_klopt', 'Ja, dit is mijn nummer'), knop('nummer_klopt_niet', 'Nee, dit klopt niet', true)],
@@ -277,7 +293,7 @@ export function inhoud(staat) {
       return {
         ...LEEG,
         titel: 'Dank je',
-        alineas: [`${naam} ziet nu dat je ervan weet.`, ...naDeJa(staat.sms, naam)],
+        alineas: [`${zin(naam)} ziet nu dat je ervan weet.`, ...naDeJa(staat.sms, naam)],
         verder: VERDER,
       }
     case 'cijfers':
@@ -294,7 +310,15 @@ export function inhoud(staat) {
       // Goedgekeurd op 11 oktober.
       return { ...LEEG, titel: 'Deze cijfers gelden niet meer', ...nieuweSms(staat.nieuw) }
     case 'bereikbaar':
-      return { ...LEEG, titel: 'Dank je', alineas: [`${naam} ziet nu dat je nummer werkt.`], verder: VERDER }
+      // Besluit 11 oktober (ontwerpronde), met "een van {naam}s mensen" in plaats van "vertrouwenspersoon voor {naam}".
+      // Besluit 12 oktober: wie de app niet heeft, stopt via de rijder of per mail; het adres wordt een link (u.html).
+      return {
+        ...LEEG,
+        titel: 'Dank je',
+        alineas: [`Je bent nu een van ${bezit(naam)} mensen. Gaat er bij een rit iets mis, dan sturen we je een sms.`],
+        stoppen: { tekst: `Wil je stoppen? Laat het ${naam} weten, of mail `, adres: 'info@totthuis.nl' },
+        verder: VERDER,
+      }
     case 'onbekend':
       return {
         ...LEEG,
@@ -333,7 +357,7 @@ export function inhoud(staat) {
 const KOP_BIJ_CIJFERS = {
   ja: (naam) => ({
     titel: 'Dank je',
-    alineas: [`${naam} ziet nu dat je ervan weet.`, `We sturen je een sms met vier cijfers. Vul ze hieronder in, dan weet ${naam} dat je nummer werkt.`],
+    alineas: [`${zin(naam)} ziet nu dat je ervan weet.`, `We sturen je een sms met vier cijfers. Vul ze hieronder in, dan weet ${naam} dat je nummer werkt.`],
   }),
   nieuw: (naam) => ({ titel: 'We sturen je een nieuwe sms', alineas: [`Vul de vier cijfers hieronder in, dan weet ${naam} dat je nummer werkt.`] }),
   terug: (naam) => ({ titel: 'Nog één stap', alineas: [`Vul de vier cijfers uit de sms hieronder in, dan weet ${naam} dat je nummer werkt.`] }),

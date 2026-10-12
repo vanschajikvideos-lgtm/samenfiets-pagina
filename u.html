@@ -15,9 +15,10 @@
 <main class="kolom">
   <h1 id="titel" tabindex="-1">Deze pagina hoort bij een uitnodiging van Tot Thuis</h1>
   <div id="tekst" class="tekst">
-    <p>Wie Tot Thuis gebruikt, kiest een paar vertrouwenspersonen en stuurt hen zelf een link naar deze pagina. Hier zeg je of je dat wilt.</p>
+    <p>Wie Tot Thuis gebruikt, kiest een paar mensen en stuurt hen zelf een link naar deze pagina. Hier zeg je of je dat wilt.</p>
     <p>Kwam je hier via zo’n link of een sms van Tot Thuis, open dan de hele link uit het bericht nog eens. Zonder die link is hier niets te doen.</p>
   </div>
+  <p id="stoppen" hidden></p>
   <p id="opmerking" class="opmerking" hidden></p>
   <p id="groot" class="groot" hidden></p>
   <p id="vraag" hidden></p>
@@ -56,6 +57,10 @@
     const i = inhoud(staat)
     $('titel').textContent = i.titel
     $('tekst').replaceChildren(...i.alineas.map((a) => Object.assign(document.createElement('p'), { textContent: a })))
+    // Het mailadres als link, zonder HTML: tekst, een a-element, en de punt.
+    const stoppen = $('stoppen')
+    stoppen.hidden = !i.stoppen
+    if (i.stoppen) stoppen.replaceChildren(i.stoppen.tekst, Object.assign(document.createElement('a'), { href: `mailto:${i.stoppen.adres}`, textContent: i.stoppen.adres }), '.')
     zet('opmerking', i.opmerking)
     zet('groot', i.groot)
     zet('vraag', i.vraag)
