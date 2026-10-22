@@ -178,7 +178,8 @@ export function naAntwoord(staat, status, body) {
   switch (soortVan(v)) {
     case 'bekijk':
       if (status !== 200) return storing
-      if (b.status === 'onbekend') return rust({ soort: 'onbekend' })
+      // §5.5 Een vervangen link zegt dat hij vervangen is; een oudere functie u stuurt het veld niet, dan zoals eerst.
+      if (b.status === 'onbekend') return rust({ soort: b.vervangen === true ? 'vervangen' : 'onbekend' })
       if (b.status === 'verlopen') return rust({ soort: 'verlopen' })
       if (b.status === 'open' && b.soort === 'deel') return rust({ soort: 'vraag', token: v.token, naam })
       if (b.status !== 'beantwoord' || b.soort !== 'deel') return storing
@@ -326,6 +327,9 @@ export function inhoud(staat) {
         alineas: ['Open de hele link uit het bericht nog eens, of vraag om een nieuwe.'],
         verder: VERDER,
       }
+    case 'vervangen':
+      // SPECIFICATIE §5.5: deze zin en meer niet; geen naam, geen datum.
+      return { ...LEEG, titel: 'Er is een nieuwere uitnodiging', alineas: ['Gebruik de laatste link die je kreeg.'], verder: VERDER }
     case 'verlopen':
       return {
         ...LEEG,
