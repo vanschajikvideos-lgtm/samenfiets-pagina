@@ -18,6 +18,9 @@
 //     nummer gaf en teruglas.
 
 const TOKEN = /^[0-9a-f]{32}$/
+// §12.11 punt 3: een groepslink deelt het pad /u (dezelfde universele link) en begint met een g. Die opent de app;
+// zonder app zegt de pagina dat, en stuurt het teken nergens heen.
+const GROEP = /^g[0-9a-f]{32}$/
 
 /**
  * "Mila's mensen", "Pims mensen", "Klaas' mensen": de bezitsvorm zoals in de
@@ -101,6 +104,7 @@ function vraag(staat, verzoek) {
  * met een token alleen bekijken.
  */
 export function begin(hash) {
+  if (GROEP.test((hash ?? '').replace(/^#/, '').trim().toLowerCase())) return rust({ soort: 'groepslink' })
   const token = tokenUitHash(hash)
   if (token) return vraag({ soort: 'laden', token }, { token })
   if ((hash ?? '').replace(/^#/, '').trim() === '') return rust({ soort: 'geen_token' })
@@ -318,6 +322,16 @@ export function inhoud(staat) {
         titel: 'Dank je',
         alineas: [`Je bent nu een van ${bezit(naam)} mensen. Gaat er bij een rit iets mis, dan sturen we je een sms.`],
         stoppen: { tekst: `Wil je stoppen? Laat het ${naam} weten, of mail `, adres: 'info@totthuis.nl' },
+        verder: VERDER,
+      }
+    case 'groepslink':
+      return {
+        ...LEEG,
+        titel: 'Open deze link in Tot Thuis',
+        alineas: [
+          'Deze link hoort bij een groep in de app Tot Thuis. Met de app vraag je om erbij te komen; wie de groep maakte, laat je toe.',
+          'Heb je de app, open de link dan op je telefoon. Fietsen met Tot Thuis kan alleen met een uitnodigingscode.',
+        ],
         verder: VERDER,
       }
     case 'onbekend':
